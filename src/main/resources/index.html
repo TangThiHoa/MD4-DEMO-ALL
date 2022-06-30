@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+            crossorigin="anonymous"></script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+</head>
+<body>
+<button onclick="findAllHouse()">SHOW ALL HOUSE LIST</button>
+
+<div id="main"></div>
+<form enctype="multipart/form-data" id="form">
+    <input type="text" name="name">
+    <input type="file" name="file"/>
+    <button type="button" onclick="submitForm()">Upload</button>
+</form>
+
+<div id="display">
+
+</div>
+
+<script type="text/javascript">
+    function submitForm() {
+        let form = document.getElementById("form");
+        let data = new FormData(form);
+        console.log(data.name)
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "http://localhost:8080/api/houses/upload",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 1000000,
+            success: function (data) {
+                document.getElementById('main').innerHTML = `${data.name}<img src="/image/${data.image}">`
+            }
+        })
+    }
+
+    let show = document.getElementById("display");
+    console.log(show)
+    function findAllHouse() {
+        $.ajax({                                                                    // $.ajax()là hàm nhỏ của jQuerry // $ : coi như trang html hiện tại
+            type: "GET",
+            url: "http://localhost:8080/api/houses",
+            success: function (data) {                                              //data là dữ liệu mình gửi sang , nó tự gộp , tự chuyển thành data
+                display(data)
+            }, error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    // 2.HÀM CHUNG CỦA BẢNG SẢN PHẨM ĐỂ TRÁNH PHẢI VIẾT LẶP LẠI
+    function display(data) {
+        let content = `<table class="table"><tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Address</th>
+                <th scope="col">Bedrooms</th>
+                <th scope="col">Bathrooms</th>
+                <th scope="col">Price</th>
+                <th scope="col">image</th>
+            </tr>`;
+        console.log(data)
+        for (let i = 0; i < data.length; i++) {
+            content += getHouse(data[i]);
+        }
+        show.innerHTML = content + "</table>";
+    }
+
+    function getHouse(house) {
+        return `<tr>
+                 <td></td>
+
+                <td>${house.houseName}</td>
+
+                <td>${house.address}</td>
+
+                <td>${house.numberOfBedrooms}</td>
+
+                <td>${house.numberOfBathrooms}</td>
+
+                <td>${house.price}</td>
+
+                <td>
+                <img src="${house.image}" width="150" height="150">
+                </td>
+
+                <td>
+            </tr>`
+    }
+
+</script>
+</body>
+</html>
