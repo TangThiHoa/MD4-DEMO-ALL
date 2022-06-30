@@ -47,10 +47,12 @@ public class HouseController {
         String fileName = file.getOriginalFilename();
         house.setImage(fileName);
         try {
-            file.transferTo(new File("D:\\Modul4\\DemoAll\\src\\image\\" + fileName));
+            file.transferTo(new File("D:\\Modul4\\DemoAll\\src\\main\\resources\\templates\\image\\" + fileName));
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        houseService.save(house);
         return ResponseEntity.ok(house);
     }
 
